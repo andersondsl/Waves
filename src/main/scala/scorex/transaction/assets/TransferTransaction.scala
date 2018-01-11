@@ -21,7 +21,6 @@ case class TransferTransaction private(assetId: Option[AssetId],
                                        timestamp: Long,
                                        feeAssetId: Option[AssetId],
                                        fee: Long,
-                                       attachment: Array[Byte],
                                        signature: ByteStr)
   extends SignedTransaction {
   override val transactionType: TransactionType.Value = TransactionType.TransferTransaction
@@ -42,16 +41,14 @@ case class TransferTransaction private(assetId: Option[AssetId],
       timestampBytes,
       amountBytes,
       feeBytes,
-      recipient.bytes.arr,
-      BytesSerializable.arrayWithSize(attachment))
+      recipient.bytes.arr)
   }
 
   override val json: Coeval[JsObject] = Coeval.evalOnce(jsonBase() ++ Json.obj(
     "recipient" -> recipient.stringRepr,
     "assetId" -> assetId.map(_.base58),
     "amount" -> amount,
-    "feeAsset" -> feeAssetId.map(_.base58),
-    "attachment" -> Base58.encode(attachment)
+    "feeAsset" -> feeAssetId.map(_.base58)
   ))
 
   override val bytes: Coeval[Array[Byte]] = Coeval.evalOnce(Bytes.concat(Array(transactionType.id.toByte), signature.arr, toSign()))
@@ -80,8 +77,7 @@ object TransferTransaction {
     (for {
       recRes <- AddressOrAlias.fromBytes(bytes, s1 + 24)
       (recipient, recipientEnd) = recRes
-      (attachment, _) = Deser.parseArraySize(bytes, recipientEnd)
-      tt <- TransferTransaction.create(assetIdOpt.map(ByteStr(_)), sender, recipient, amount, timestamp, feeAssetIdOpt.map(ByteStr(_)), feeAmount, attachment, signature)
+      tt <- TransferTransaction.create(assetIdOpt.map(ByteStr(_)), sender, recipient, amount, timestamp, feeAssetIdOpt.map(ByteStr(_)), feeAmount, signature)
     } yield tt).fold(left => Failure(new Exception(left.toString)), right => Success(right))
   }.flatten
 
@@ -92,18 +88,15 @@ object TransferTransaction {
              timestamp: Long,
              feeAssetId: Option[AssetId],
              feeAmount: Long,
-             attachment: Array[Byte],
              signature: ByteStr): Either[ValidationError, TransferTransaction] = {
-    if (attachment.length > TransferTransaction.MaxAttachmentSize) {
-      Left(ValidationError.TooBigArray)
-    } else if (amount <= 0) {
+    if (amount <= 0) {
       Left(ValidationError.NegativeAmount(amount, "waves")) //CHECK IF AMOUNT IS POSITIVE
     } else if (Try(Math.addExact(amount, feeAmount)).isFailure) {
       Left(ValidationError.OverflowError) // CHECK THAT fee+amount won't overflow Long
     } else if (feeAmount <= 0) {
       Left(ValidationError.InsufficientFee)
     } else {
-      Right(TransferTransaction(assetId, sender, recipient, amount, timestamp, feeAssetId, feeAmount, attachment, signature))
+      Right(TransferTransaction(assetId, sender, recipient, amount, timestamp, feeAssetId, feeAmount, signature))
     }
   }
 
@@ -113,9 +106,8 @@ object TransferTransaction {
              amount: Long,
              timestamp: Long,
              feeAssetId: Option[AssetId],
-             feeAmount: Long,
-             attachment: Array[Byte]): Either[ValidationError, TransferTransaction] = {
-    create(assetId, sender, recipient, amount, timestamp, feeAssetId, feeAmount, attachment, ByteStr.empty).right.map { unsigned =>
+             feeAmount: Long): Either[ValidationError, TransferTransaction] = {
+    create(assetId, sender, recipient, amount, timestamp, feeAssetId, feeAmount, ByteStr.empty).right.map { unsigned =>
       unsigned.copy(signature = ByteStr(EllipticCurveImpl.sign(sender, unsigned.toSign())))
     }
   }
