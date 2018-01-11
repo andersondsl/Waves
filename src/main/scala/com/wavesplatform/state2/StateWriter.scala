@@ -10,7 +10,7 @@ import com.wavesplatform.state2.reader.StateReaderImpl
 import monix.reactive.Observable
 import monix.reactive.subjects.BehaviorSubject
 import scorex.transaction.PaymentTransaction
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.transaction.assets.exchange.ExchangeTransaction
 import scorex.utils.ScorexLogging
 import scorex.utils.Synchronized.ReadLock
@@ -47,7 +47,7 @@ class StateWriterImpl(p: StateStorage, storeTransactions: Boolean, synchronizati
 
     measureSizeLog("transactions")(txsDiff.transactions) { txs =>
       txs.toSeq.foreach {
-        case (id, (h, tx@(_: TransferTransaction | _: ExchangeTransaction | _: PaymentTransaction), _)) =>
+        case (id, (h, tx@(_: TransferTransactionOLD | _: ExchangeTransaction | _: PaymentTransaction), _)) =>
           sp().transactions.put(id, (h, if (storeTransactions) tx.bytes() else Array.emptyByteArray))
         case (id, (h, tx, _)) => sp().transactions.put(id, (h, tx.bytes()))
       }

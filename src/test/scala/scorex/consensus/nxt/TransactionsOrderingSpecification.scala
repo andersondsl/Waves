@@ -4,7 +4,7 @@ import com.wavesplatform.state2.ByteStr
 import org.scalatest.{Assertions, Matchers, PropSpec}
 import scorex.account.{Address, PrivateKeyAccount}
 import scorex.consensus.TransactionsOrdering
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 import scala.util.Random
 
@@ -12,14 +12,14 @@ class TransactionsOrderingSpecification extends PropSpec with Assertions with Ma
 
   property("TransactionsOrdering.InBlock should sort correctly") {
     val txsDifferentById = (0 to 3).map(i =>
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 5, None, 125L, Array(i.toByte)).right.get).sortBy(t => t.id().base58)
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 5, None, 125L, Array(i.toByte)).right.get).sortBy(t => t.id().base58)
 
     val correctSeq = txsDifferentById ++ Seq(
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 125L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, None, 124L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 124L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, Some(ByteStr.empty), 124L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, Some(ByteStr.empty), 124L, Array.empty).right.get)
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 125L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, None, 124L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 124L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, Some(ByteStr.empty), 124L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, Some(ByteStr.empty), 124L, Array.empty).right.get)
 
     val sorted = Random.shuffle(correctSeq).sorted(TransactionsOrdering.InBlock)
 
@@ -28,14 +28,14 @@ class TransactionsOrderingSpecification extends PropSpec with Assertions with Ma
 
   property("TransactionsOrdering.InUTXPool should sort correctly") {
     val txsDifferentById = (0 to 3).map(i =>
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 5, None, 125L, Array(i.toByte)).right.get).sortBy(t => t.id().base58)
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 5, None, 125L, Array(i.toByte)).right.get).sortBy(t => t.id().base58)
 
     val correctSeq = txsDifferentById ++ Seq(
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 124L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 123L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, None, 123L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, Some(ByteStr.empty), 124L, Array.empty).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, Some(ByteStr.empty), 124L, Array.empty).right.get)
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 124L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, None, 123L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, None, 123L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 1, Some(ByteStr.empty), 124L, Array.empty).right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get, 100000, 2, Some(ByteStr.empty), 124L, Array.empty).right.get)
 
     val sorted = Random.shuffle(correctSeq).sorted(TransactionsOrdering.InUTXPool)
 
@@ -44,9 +44,9 @@ class TransactionsOrderingSpecification extends PropSpec with Assertions with Ma
 
   property("TransactionsOrdering.InBlock should sort txs by decreasing block timestamp") {
     val correctSeq = Seq(
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
         100000, 124L, None, 1, Array()).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
         100000, 123L, None, 1, Array()).right.get)
 
     Random.shuffle(correctSeq).sorted(TransactionsOrdering.InBlock) shouldBe correctSeq
@@ -54,9 +54,9 @@ class TransactionsOrderingSpecification extends PropSpec with Assertions with Ma
 
   property("TransactionsOrdering.InUTXPool should sort txs by ascending block timestamp") {
     val correctSeq = Seq(
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
         100000, 123L, None, 1, Array()).right.get,
-      TransferTransaction.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
+      TransferTransactionOLD.create(None, PrivateKeyAccount(Array.fill(32)(0)), Address.fromString("3MydsP4UeQdGwBq7yDbMvf9MzfB2pxFoUKU").right.get,
         100000, 124L, None, 1, Array()).right.get)
     Random.shuffle(correctSeq).sorted(TransactionsOrdering.InUTXPool) shouldBe correctSeq
   }

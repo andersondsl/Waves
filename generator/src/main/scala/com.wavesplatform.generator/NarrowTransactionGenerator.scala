@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import scorex.account.{Alias, PrivateKeyAccount}
 import scorex.transaction.TransactionParser.TransactionType
 import scorex.transaction.assets.exchange.{AssetPair, ExchangeTransaction, Order}
-import scorex.transaction.assets.{BurnTransaction, IssueTransaction, ReissueTransaction, TransferTransaction}
+import scorex.transaction.assets.{BurnTransaction, IssueTransaction, ReissueTransaction, TransferTransactionOLD}
 import scorex.transaction.lease.{LeaseCancelTransaction, LeaseTransaction}
 import scorex.transaction.{CreateAliasTransaction, PaymentTransaction, Transaction, ValidationError}
 import scorex.utils.LoggerFacade
@@ -45,7 +45,7 @@ class NarrowTransactionGenerator(settings: Settings,
 
     val tradeAssetDistribution = {
       tradeAssetIssue +: accounts.map(acc => {
-        TransferTransaction.create(Some(tradeAssetIssue.id()), issueTransactionSender, acc, 5, System.currentTimeMillis(), None, 100000, Array.fill(r.nextInt(100))(r.nextInt().toByte)).right.get
+        TransferTransactionOLD.create(Some(tradeAssetIssue.id()), issueTransactionSender, acc, 5, System.currentTimeMillis(), None, 100000, Array.fill(r.nextInt(100))(r.nextInt().toByte)).right.get
       })
     }
 
@@ -78,7 +78,7 @@ class NarrowTransactionGenerator(settings: Settings,
             val reissuable = r.nextBoolean()
             val amount = 100000000L + Random.nextInt(Int.MaxValue)
             logOption(IssueTransaction.create(sender, name, description, amount, Random.nextInt(9).toByte, reissuable, 100000000L + r.nextInt(100000000), ts))
-          case TransactionType.TransferTransaction =>
+          case TransactionType.TransferTransactionOLD =>
             val useAlias = r.nextBoolean()
             val recipient = if (useAlias && aliases.nonEmpty) randomFrom(aliases).map(_.alias).get else randomFrom(accounts).get.toAddress
             val sendAsset = r.nextBoolean()
@@ -90,7 +90,7 @@ class NarrowTransactionGenerator(settings: Settings,
               })
             } else Some(randomFrom(accounts).get, None)
             senderAndAssetOpt.flatMap { case (sender, asset) =>
-              logOption(TransferTransaction.create(asset, sender, recipient, r.nextInt(500000), ts, None, moreThatStandartFee,
+              logOption(TransferTransactionOLD.create(asset, sender, recipient, r.nextInt(500000), ts, None, moreThatStandartFee,
                 Array.fill(r.nextInt(100))(r.nextInt().toByte)))
             }
           case TransactionType.ReissueTransaction =>

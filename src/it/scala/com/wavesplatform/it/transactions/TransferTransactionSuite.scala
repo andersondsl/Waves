@@ -5,13 +5,13 @@ import com.wavesplatform.it.util._
 import org.scalatest.CancelAfterFailure
 import scorex.account.{AddressOrAlias, PrivateKeyAccount}
 import scorex.api.http.Mistiming
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 import scala.concurrent.Await
 import scala.concurrent.Future.{sequence, traverse}
 import scala.concurrent.duration._
 
-class TransferTransactionSuite extends BaseTransactionSuite with TransferSending with CancelAfterFailure {
+class TransferTransactionOLDSuite extends BaseTransactionSuite with TransferSending with CancelAfterFailure {
 
   private val waitCompletion = 2.minutes
   private val defaultAssetQuantity = 100000
@@ -31,8 +31,8 @@ class TransferTransactionSuite extends BaseTransactionSuite with TransferSending
       _ <- assertBalances(firstAddress, firstBalance - issueFee, firstEffBalance - issueFee)
         .zip(assertAssetBalance(firstAddress, issuedAssetId, defaultAssetQuantity))
 
-      transferTransactionId <- sender.transfer(firstAddress, secondAddress, defaultAssetQuantity, transferFee, Some(issuedAssetId)).map(_.id)
-      _ <- waitForHeightAraiseAndTxPresent(transferTransactionId, 1)
+      TransferTransactionOLDId <- sender.transfer(firstAddress, secondAddress, defaultAssetQuantity, transferFee, Some(issuedAssetId)).map(_.id)
+      _ <- waitForHeightAraiseAndTxPresent(TransferTransactionOLDId, 1)
       _ <- assertBalances(firstAddress, firstBalance - transferFee - issueFee, firstEffBalance - transferFee - issueFee)
         .zip(assertBalances(secondAddress, secondBalance, secondEffBalance))
         .zip(assertAssetBalance(firstAddress, issuedAssetId, 0))
@@ -57,7 +57,7 @@ class TransferTransactionSuite extends BaseTransactionSuite with TransferSending
   }
 
   test("invalid signed waves transfer should not be in UTX or blockchain") {
-    def invalidByTsTx(ts: Long) = TransferTransaction.create(None,
+    def invalidByTsTx(ts: Long) = TransferTransactionOLD.create(None,
       PrivateKeyAccount.fromSeed(sender.accountSeed).right.get,
       AddressOrAlias.fromString(sender.address).right.get,
       1,

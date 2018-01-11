@@ -9,12 +9,12 @@ import org.scalatest.{Matchers, PropSpec}
 import scorex.account.Address
 import scorex.lagonaki.mocks.TestBlock
 import scorex.transaction.GenesisTransaction
-import scorex.transaction.assets.{IssueTransaction, TransferTransaction}
+import scorex.transaction.assets.{IssueTransaction, TransferTransactionOLD}
 
-class TransferTransactionDiffTest extends PropSpec
+class TransferTransactionOLDDiffTest extends PropSpec
   with PropertyChecks with Matchers with TransactionGen with NoShrink {
 
-  val preconditionsAndTransfer: Gen[(GenesisTransaction, IssueTransaction, IssueTransaction, TransferTransaction)] = for {
+  val preconditionsAndTransfer: Gen[(GenesisTransaction, IssueTransaction, IssueTransaction, TransferTransactionOLD)] = for {
     master <- accountGen
     recepient <- otherAccountGen(candidate = master)
     ts <- positiveIntGen

@@ -6,7 +6,7 @@ import org.scalatest.Suite
 import scorex.account.{Address, AddressOrAlias, AddressScheme, PrivateKeyAccount}
 import scorex.api.http.assets.SignedTransferRequest
 import scorex.crypto.encode.Base58
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.utils.ScorexLogging
 
 import scala.concurrent.Future
@@ -73,7 +73,7 @@ trait TransferSending extends HasNodes with ScorexLogging {
     val n = requests.size
     val start = System.currentTimeMillis() - n
     val xs = requests.zipWithIndex.map { case (x, i) =>
-      createSignedTransferRequest(TransferTransaction
+      createSignedTransferRequest(TransferTransactionOLD
         .create(
           assetId = None,
           sender = PrivateKeyAccount.fromSeed(x.senderSeed).right.get,
@@ -90,7 +90,7 @@ trait TransferSending extends HasNodes with ScorexLogging {
     nodes.head.batchSignedTransfer(xs).map(_.lastOption)
   }
 
-  protected def createSignedTransferRequest(tx: TransferTransaction): SignedTransferRequest = {
+  protected def createSignedTransferRequest(tx: TransferTransactionOLD): SignedTransferRequest = {
     import tx._
     SignedTransferRequest(
       Base58.encode(tx.sender.publicKey),

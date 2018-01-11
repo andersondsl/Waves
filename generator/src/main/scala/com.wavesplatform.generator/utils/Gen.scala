@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 import com.wavesplatform.generator.utils.Implicits._
 import scorex.account.{Address, PrivateKeyAccount}
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.transaction.{Transaction, TransactionParser}
 
 object Gen {
@@ -20,7 +20,7 @@ object Gen {
     senderGen.zip(recipientGen).zip(feeGen)
       .map {
         case ((src, dst), fee) =>
-          TransferTransaction.create(None, src, dst, fee, System.currentTimeMillis(), None, fee, Array.emptyByteArray)
+          TransferTransactionOLD.create(None, src, dst, fee, System.currentTimeMillis(), None, fee, Array.emptyByteArray)
       }
       .collect { case Right(x) => x }
   }

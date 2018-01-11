@@ -8,7 +8,7 @@ import scorex.api.http.assets._
 import scorex.api.http.leasing.{SignedLeaseCancelRequest, SignedLeaseRequest}
 import scorex.crypto.encode.Base58
 import scorex.transaction.TransactionParser
-import scorex.transaction.assets.{IssueTransaction, TransferTransaction}
+import scorex.transaction.assets.{IssueTransaction, TransferTransactionOLD}
 
 trait RequestGen extends TransactionGen {
   val nonPositiveLong: G[Long] = choose(Long.MinValue, 0).label("non-positive value")
@@ -18,7 +18,7 @@ trait RequestGen extends TransactionGen {
   ).label("invalid decimals")
 
   val longAttachment: G[String] =
-    genBoundedBytes(TransferTransaction.MaxAttachmentSize + 10, TransferTransaction.MaxAttachmentSize + 50)
+    genBoundedBytes(TransferTransactionOLD.MaxAttachmentSize + 10, TransferTransactionOLD.MaxAttachmentSize + 50)
       .map(Base58.encode)
   val invalidBase58: G[String] = listOfN(50, oneOf(alphaNumChar, oneOf('O', '0', 'l')))
     .map(_.mkString)

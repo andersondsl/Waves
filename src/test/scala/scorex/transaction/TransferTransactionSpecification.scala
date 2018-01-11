@@ -4,14 +4,14 @@ import com.wavesplatform.TransactionGen
 import org.scalatest._
 import org.scalatest.prop.PropertyChecks
 import scorex.transaction.TransactionParser.TransactionType
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
-class TransferTransactionSpecification extends PropSpec with PropertyChecks with Matchers with TransactionGen {
+class TransferTransactionOLDSpecification extends PropSpec with PropertyChecks with Matchers with TransactionGen {
 
   property("Transfer serialization roundtrip") {
-    forAll(transferGen) { transfer: TransferTransaction =>
-      require(transfer.bytes().head == TransactionType.TransferTransaction.id)
-      val recovered = TransferTransaction.parseTail(transfer.bytes().tail).get
+    forAll(transferGen) { transfer: TransferTransactionOLD =>
+      require(transfer.bytes().head == TransactionType.TransferTransactionOLD.id)
+      val recovered = TransferTransactionOLD.parseTail(transfer.bytes().tail).get
 
       recovered.sender.address shouldEqual transfer.sender.address
       recovered.assetId.map(_ == transfer.assetId.get).getOrElse(transfer.assetId.isEmpty) shouldBe true
@@ -26,7 +26,7 @@ class TransferTransactionSpecification extends PropSpec with PropertyChecks with
   }
 
   property("Transfer serialization from TypedTransaction") {
-    forAll(transferGen) { tx: TransferTransaction =>
+    forAll(transferGen) { tx: TransferTransactionOLD =>
       val recovered = TransactionParser.parseBytes(tx.bytes()).get
       recovered.bytes() shouldEqual tx.bytes()
     }

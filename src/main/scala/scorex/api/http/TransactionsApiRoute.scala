@@ -150,7 +150,7 @@ case class TransactionsApiRoute(
         import TransactionType._
         val txEi = TransactionType((jsv \ "type").as[Int]) match {
           case IssueTransaction => TransactionFactory.issueAsset(jsv.as[IssueRequest], wallet, time)
-          case TransferTransaction => TransactionFactory.transferAsset(jsv.as[TransferRequest], wallet, time)
+          case TransferTransactionOLD => TransactionFactory.transferAsset(jsv.as[TransferRequest], wallet, time)
           case ReissueTransaction => TransactionFactory.reissueAsset(jsv.as[ReissueRequest], wallet, time)
           case BurnTransaction => TransactionFactory.burnAsset(jsv.as[BurnRequest], wallet, time)
           case LeaseTransaction => TransactionFactory.lease(jsv.as[LeaseRequest], wallet, time)
@@ -177,7 +177,7 @@ case class TransactionsApiRoute(
         import TransactionType._
         val req = TransactionType((jsv \ "type").as[Int]) match {
           case IssueTransaction => jsv.as[SignedIssueRequest].toTx
-          case TransferTransaction => jsv.as[SignedTransferRequest].toTx
+          case TransferTransactionOLD => jsv.as[SignedTransferRequest].toTx
           case ReissueTransaction => jsv.as[SignedReissueRequest].toTx
           case BurnTransaction => jsv.as[SignedBurnRequest].toTx
           case LeaseTransaction => jsv.as[SignedLeaseRequest].toTx

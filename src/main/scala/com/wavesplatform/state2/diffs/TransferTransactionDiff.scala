@@ -7,12 +7,12 @@ import com.wavesplatform.state2.reader.SnapshotStateReader
 import scorex.account.Address
 import scorex.transaction.ValidationError
 import scorex.transaction.ValidationError.GenericError
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 import scala.util.Right
 
-object TransferTransactionDiff {
-  def apply(state: SnapshotStateReader, s: FunctionalitySettings, blockTime: Long, height: Int)(tx: TransferTransaction): Either[ValidationError, Diff] = {
+object TransferTransactionOLDDiff {
+  def apply(state: SnapshotStateReader, s: FunctionalitySettings, blockTime: Long, height: Int)(tx: TransferTransactionOLD): Either[ValidationError, Diff] = {
     val sender = Address.fromPublicKey(tx.sender.publicKey)
 
     val isInvalidEi = for {

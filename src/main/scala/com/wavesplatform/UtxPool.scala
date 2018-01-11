@@ -17,7 +17,7 @@ import scorex.account.Address
 import scorex.consensus.TransactionsOrdering
 import scorex.transaction.ValidationError.{GenericError, SenderIsBlacklisted}
 import scorex.transaction._
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.utils.{ScorexLogging, Time}
 
 import scala.collection.JavaConverters._
@@ -110,7 +110,7 @@ class UtxPoolImpl(time: Time,
       }
 
       val recipient: Option[String] = tx match {
-        case x: TransferTransaction => Some(x.recipient.stringRepr)
+        case x: TransferTransactionOLD => Some(x.recipient.stringRepr)
         case _ => None
       }
 

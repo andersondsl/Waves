@@ -13,7 +13,7 @@ import scorex.consensus.nxt.NxtLikeConsensusBlockData
 import scorex.crypto.EllipticCurveImpl
 import scorex.crypto.hash.FastCryptographicHash
 import scorex.transaction._
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 class BlockSpecification extends PropSpec with PropertyChecks with TransactionGen with Matchers with NoShrink {
 
@@ -41,7 +41,7 @@ class BlockSpecification extends PropSpec with PropertyChecks with TransactionGe
     assetId = Some(ByteStr(assetBytes))
     sender <- accountGen
     recipient <- accountGen
-    paymentTransaction: TransferTransaction <- wavesTransferGeneratorP(time, sender, recipient)
+    paymentTransaction: TransferTransactionOLD <- wavesTransferGeneratorP(time, sender, recipient)
   } yield Block.buildAndSign(3, time, reference, NxtLikeConsensusBlockData(baseTarget, ByteStr(generationSignature)), Seq.fill(amt)(paymentTransaction), recipient, Set.empty).explicitGet()
 
   property(" block with txs bytes/parse roundtrip version 1,2") {

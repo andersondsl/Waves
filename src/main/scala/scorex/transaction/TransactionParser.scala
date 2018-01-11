@@ -13,6 +13,7 @@ object TransactionParser {
     val GenesisTransaction = Value(1)
     val PaymentTransaction = Value(2)
     val IssueTransaction = Value(3)
+    val TransferTransactionOLD = Value(4)
     val TransferTransaction = Value(4)
     val ReissueTransaction = Value(5)
     val BurnTransaction = Value(6)
@@ -40,6 +41,9 @@ object TransactionParser {
 
       case txType: Byte if txType == TransactionType.IssueTransaction.id =>
         IssueTransaction.parseTail(data.tail)
+
+      case txType: Byte if txType == TransactionType.TransferTransactionOLD.id =>
+        TransferTransactionOLD.parseTail(data.tail)
 
       case txType: Byte if txType == TransactionType.TransferTransaction.id =>
         TransferTransaction.parseTail(data.tail)

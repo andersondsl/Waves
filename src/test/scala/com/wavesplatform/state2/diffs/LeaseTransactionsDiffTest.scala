@@ -10,7 +10,7 @@ import scorex.account.Address
 import scorex.lagonaki.mocks.TestBlock
 import scorex.settings.TestFunctionalitySettings
 import scorex.transaction.GenesisTransaction
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.transaction.lease.{LeaseCancelTransaction, LeaseTransaction}
 
 class LeaseTransactionsDiffTest extends PropSpec
@@ -59,7 +59,7 @@ class LeaseTransactionsDiffTest extends PropSpec
     }
   }
 
-  val cancelLeaseTwice: Gen[(GenesisTransaction, TransferTransaction, LeaseTransaction, LeaseCancelTransaction, LeaseCancelTransaction)] = for {
+  val cancelLeaseTwice: Gen[(GenesisTransaction, TransferTransactionOLD, LeaseTransaction, LeaseCancelTransaction, LeaseCancelTransaction)] = for {
     master <- accountGen
     recpient <- accountGen suchThat (_ != master)
     ts <- timestampGen

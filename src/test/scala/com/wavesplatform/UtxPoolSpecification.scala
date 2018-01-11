@@ -15,7 +15,7 @@ import scorex.account.{Address, PrivateKeyAccount, PublicKeyAccount}
 import scorex.block.Block
 import scorex.settings.TestFunctionalitySettings
 import scorex.transaction.ValidationError.SenderIsBlacklisted
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.transaction.{FeeCalculator, Transaction}
 import scorex.utils.Time
 
@@ -51,13 +51,13 @@ class UtxPoolSpecification extends FreeSpec
     amount <- chooseNum(1, (maxAmount * 0.9).toLong)
     recipient <- accountGen
     fee <- chooseNum(1, (maxAmount * 0.1).toLong)
-  } yield TransferTransaction.create(None, sender, recipient, amount, time.getTimestamp(), None, fee, Array.empty[Byte]).right.get)
-    .label("transferTransaction")
+  } yield TransferTransactionOLD.create(None, sender, recipient, amount, time.getTimestamp(), None, fee, Array.empty[Byte]).right.get)
+    .label("TransferTransactionOLD")
 
   private def transferWithRecipient(sender: PrivateKeyAccount, recipient: PublicKeyAccount, maxAmount: Long, time: Time) = (for {
     amount <- chooseNum(1, (maxAmount * 0.9).toLong)
     fee <- chooseNum(1, (maxAmount * 0.1).toLong)
-  } yield TransferTransaction.create(None, sender, recipient, amount, time.getTimestamp(), None, fee, Array.empty[Byte]).right.get)
+  } yield TransferTransactionOLD.create(None, sender, recipient, amount, time.getTimestamp(), None, fee, Array.empty[Byte]).right.get)
     .label("transferWithRecipient")
 
   private val stateGen = for {
@@ -124,7 +124,7 @@ class UtxPoolSpecification extends FreeSpec
   }).label("withBlacklistedAndAllowedByRule")
 
   private def utxTest(utxSettings: UtxSettings = UtxSettings(20, 5.seconds, Set.empty, Set.empty, 5.minutes), txCount: Int = 10)
-                     (f: (Seq[TransferTransaction], UtxPool, TestTime) => Unit): Unit = forAll(
+                     (f: (Seq[TransferTransactionOLD], UtxPool, TestTime) => Unit): Unit = forAll(
     stateGen,
     chooseNum(2, txCount).label("txCount")) { case ((sender, senderBalance, state, history), count) =>
     val time = new TestTime()

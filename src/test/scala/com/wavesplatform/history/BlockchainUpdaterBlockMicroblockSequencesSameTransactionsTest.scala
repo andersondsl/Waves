@@ -9,7 +9,7 @@ import org.scalatest.prop.PropertyChecks
 import scorex.account.PrivateKeyAccount
 import scorex.block.{Block, MicroBlock}
 import scorex.transaction._
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 class BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest
   extends PropSpec
@@ -21,7 +21,7 @@ class BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest
 
   import BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest._
 
-  type Setup = (GenesisTransaction, TransferTransaction, TransferTransaction, TransferTransaction)
+  type Setup = (GenesisTransaction, TransferTransactionOLD, TransferTransactionOLD, TransferTransactionOLD)
 
 
 
@@ -44,14 +44,14 @@ class BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest
 
   //
   property("Miner fee from microblock [Genesis] <- [Empty] <~ (Micro with tx) <- [Empty]") {
-    val preconditionsAndPayments: Gen[(PrivateKeyAccount, GenesisTransaction, TransferTransaction, Int)] = for {
+    val preconditionsAndPayments: Gen[(PrivateKeyAccount, GenesisTransaction, TransferTransactionOLD, Int)] = for {
       master <- accountGen
       miner <- accountGen
       ts <- positiveIntGen
       fee <- smallFeeGen
       amt <- smallFeeGen
       genesis: GenesisTransaction = GenesisTransaction.create(master, ENOUGH_AMT, ts).right.get
-      payment: TransferTransaction = createWavesTransfer(master, master, amt, fee, ts).explicitGet()
+      payment: TransferTransactionOLD = createWavesTransfer(master, master, amt, fee, ts).explicitGet()
     } yield (miner, genesis, payment, ts)
     scenario(preconditionsAndPayments, MicroblocksActivatedAt0WavesSettings) { case (domain, (miner, genesis, payment, ts)) =>
       val genBlock = buildBlockOfTxs(randomSig, Seq(genesis))
@@ -124,14 +124,14 @@ object BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest extends Tra
     }._1.reverse
   }
 
-  def randomPayment(accs: Seq[PrivateKeyAccount], ts: Long): Gen[TransferTransaction] = for {
+  def randomPayment(accs: Seq[PrivateKeyAccount], ts: Long): Gen[TransferTransactionOLD] = for {
     from <- Gen.oneOf(accs)
     to <- Gen.oneOf(accs)
     fee <- smallFeeGen
     amt <- smallFeeGen
   } yield createWavesTransfer(from, to, amt, fee, ts).explicitGet()
 
-  def randomPayments(accs: Seq[PrivateKeyAccount], ts: Long, amt: Int): Gen[Seq[TransferTransaction]] =
+  def randomPayments(accs: Seq[PrivateKeyAccount], ts: Long, amt: Int): Gen[Seq[TransferTransactionOLD]] =
     if (amt == 0)
       Gen.const(Seq.empty)
     else for {
@@ -158,7 +158,7 @@ object BlockchainUpdaterBlockMicroblockSequencesSameTransactionsTest extends Tra
 
   def g(totalTxs: Int, totalScenarios: Int): Gen[(Block, Seq[(BlockAndMicroblockSequence, Block)])] = for {
     aaa@(accs, miner, genesis, ts) <- accsAndGenesis()
-    payments: Seq[TransferTransaction] <- randomPayments(accs, ts, totalTxs)
+    payments: Seq[TransferTransactionOLD] <- randomPayments(accs, ts, totalTxs)
     intSeqs: Seq[BlockAndMicroblockSizes] <- randomSequences(totalTxs, totalScenarios)
   } yield {
     val version = 3: Byte

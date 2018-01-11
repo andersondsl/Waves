@@ -25,7 +25,7 @@ object CommonValidation {
         case ptx: PaymentTransaction if s.partialPortfolio(ptx.sender).balance < (ptx.amount + ptx.fee) =>
           Left(GenericError(s"Attempt to pay unavailable funds: balance " +
             s"${s.partialPortfolio(ptx.sender).balance} is less than ${ptx.amount + ptx.fee}"))
-        case ttx: TransferTransaction =>
+        case ttx: TransferTransactionOLD =>
           val sender: Address = ttx.sender
 
           val amountDiff = ttx.assetId match {
@@ -68,7 +68,7 @@ object CommonValidation {
       case _: BurnTransaction => Right(tx)
       case _: PaymentTransaction => Right(tx)
       case _: GenesisTransaction => Right(tx)
-      case _: TransferTransaction => Right(tx)
+      case _: TransferTransactionOLD => Right(tx)
       case _: IssueTransaction => Right(tx)
       case _: ReissueTransaction => Right(tx)
       case _: ExchangeTransaction => Right(tx)

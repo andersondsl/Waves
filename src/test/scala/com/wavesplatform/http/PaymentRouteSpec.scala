@@ -8,7 +8,7 @@ import org.scalatest.prop.PropertyChecks
 import play.api.libs.json.{JsObject, Json}
 import scorex.api.http.{ApiKeyNotValid, PaymentApiRoute}
 import scorex.transaction.Transaction
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 import scorex.utils.Time
 
 class PaymentRouteSpec
@@ -37,7 +37,7 @@ class PaymentRouteSpec
         }
 
         val sender = testWallet.privateKeyAccounts.head
-        val tx = TransferTransaction.create(None, sender, recipient, amount, timestamp, None, fee, Array())
+        val tx = TransferTransactionOLD.create(None, sender, recipient, amount, timestamp, None, fee, Array())
 
         val route = PaymentApiRoute(restAPISettings, testWallet, utx, allChannels, time).route
 

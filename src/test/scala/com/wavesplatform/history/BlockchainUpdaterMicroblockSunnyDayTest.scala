@@ -8,11 +8,11 @@ import org.scalatest._
 import org.scalatest.prop.PropertyChecks
 import scorex.account.{Address, AddressOrAlias, PrivateKeyAccount}
 import scorex.transaction._
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 class BlockchainUpdaterMicroblockSunnyDayTest extends PropSpec with PropertyChecks with DomainScenarioDrivenPropertyCheck with Matchers with TransactionGen {
 
-  type Setup = (GenesisTransaction, TransferTransaction, TransferTransaction, TransferTransaction)
+  type Setup = (GenesisTransaction, TransferTransactionOLD, TransferTransactionOLD, TransferTransactionOLD)
   val preconditionsAndPayments: Gen[Setup] = for {
     master <- accountGen
     alice <- accountGen
@@ -20,7 +20,7 @@ class BlockchainUpdaterMicroblockSunnyDayTest extends PropSpec with PropertyChec
     ts <- positiveIntGen
     fee <- smallFeeGen
     genesis: GenesisTransaction = GenesisTransaction.create(master, ENOUGH_AMT, ts).right.get
-    masterToAlice: TransferTransaction <- wavesTransferGeneratorP(master, alice)
+    masterToAlice: TransferTransactionOLD <- wavesTransferGeneratorP(master, alice)
     aliceToBob = createWavesTransfer(alice, bob, masterToAlice.amount - fee - 1, fee, ts).right.get
     aliceToBob2 = createWavesTransfer(alice, bob, masterToAlice.amount - fee - 1, fee, ts + 1).right.get
   } yield (genesis, masterToAlice, aliceToBob, aliceToBob2)

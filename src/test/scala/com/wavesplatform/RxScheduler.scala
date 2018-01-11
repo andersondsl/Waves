@@ -7,7 +7,7 @@ import scorex.account.PrivateKeyAccount
 import scorex.block.{Block, MicroBlock, SignerData}
 import scorex.lagonaki.mocks.TestBlock
 import scorex.transaction.TransactionParser
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -31,7 +31,7 @@ trait RxScheduler {
   def block(id: Int): Block = TestBlock.create(Seq.empty).copy(signerData = SignerData(signer, byteStr(id)))
 
   def microBlock(total: Int, prev: Int): MicroBlock = {
-    val tx = TransferTransaction.create(None, signer, signer.toAddress, 1, 1, None, 1, Array.emptyByteArray).explicitGet()
+    val tx = TransferTransactionOLD.create(None, signer, signer.toAddress, 1, 1, None, 1, Array.emptyByteArray).explicitGet()
     MicroBlock.buildAndSign(signer, Seq(tx), byteStr(prev), byteStr(total)).explicitGet()
   }
 }

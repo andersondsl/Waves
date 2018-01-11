@@ -8,7 +8,7 @@ import scorex.lagonaki.mocks.TestBlock
 
 object JsBlockParser extends App {
 
-//  def parseTx(str: String): TransferTransaction = {
+//  def parseTx(str: String): TransferTransactionOLD = {
 //    val js = Json.parse(str)
 //    val sig = ByteStr.decodeBase58((js \ "signature").get.as[String]).get
 //    val senderPk = ByteStr.decodeBase58((js \ "senderPublicKey").get.as[String]).get
@@ -16,14 +16,14 @@ object JsBlockParser extends App {
 //    val fee = (js \ "fee").get.as[Long]
 //    val timestamp = (js \ "timestamp").get.as[Long]
 //    val amount = (js \ "amount").get.as[Long]
-//    TransferTransaction(None, PublicKeyAccount(senderPk.arr), Address.fromString(recipient).explicitGet(), amount, timestamp, None, fee, Array.emptyByteArray, sig)
+//    TransferTransactionOLD(None, PublicKeyAccount(senderPk.arr), Address.fromString(recipient).explicitGet(), amount, timestamp, None, fee, Array.emptyByteArray, sig)
 //  }
 
   AddressScheme.current = new AddressScheme {
     override val chainId: Byte = 84//'I'
   }
 
-//  private val txs: List[TransferTransaction] = Source.fromFile("C:\\Users\\ilyas\\Desktop\\is2.json").getLines
+//  private val txs: List[TransferTransactionOLD] = Source.fromFile("C:\\Users\\ilyas\\Desktop\\is2.json").getLines
 //    .toList
 //    .map(_.trim)
 //    .map(parseTx)

@@ -5,19 +5,19 @@ import org.scalatest.prop.PropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 import scorex.account.PrivateKeyAccount
 import scorex.transaction.TransactionParser.TransactionType
-import scorex.transaction.assets.TransferTransaction
+import scorex.transaction.assets.TransferTransactionOLD
 
 import scala.util.{Failure, Try}
 
 
 class TransactionSpecification extends PropSpec with PropertyChecks with Matchers with TransactionGen {
 
-  def parseBytes(data: Array[Byte]): Try[TransferTransaction] = {
+  def parseBytes(data: Array[Byte]): Try[TransferTransactionOLD] = {
     data.head match {
-      case transactionType: Byte if transactionType == TransactionType.TransferTransaction.id =>
-        TransferTransaction.parseTail(data.tail)
+      case transactionType: Byte if transactionType == TransactionType.TransferTransactionOLD.id =>
+        TransferTransactionOLD.parseTail(data.tail)
       case transactionType =>
-        Failure(new Exception(s"Incorrect transaction type '$transactionType' in TransferTransaction data"))
+        Failure(new Exception(s"Incorrect transaction type '$transactionType' in TransferTransactionOLD data"))
     }
   }
 
@@ -50,7 +50,7 @@ class TransactionSpecification extends PropSpec with PropertyChecks with Matcher
         txAfter.getClass.shouldBe(tx.getClass)
 
         tx.signature shouldEqual txAfter.signature
-        tx.sender shouldEqual txAfter.asInstanceOf[TransferTransaction].sender
+        tx.sender shouldEqual txAfter.asInstanceOf[TransferTransactionOLD].sender
         tx.recipient shouldEqual txAfter.recipient
         tx.timestamp shouldEqual txAfter.timestamp
         tx.amount shouldEqual txAfter.amount
@@ -58,19 +58,19 @@ class TransactionSpecification extends PropSpec with PropertyChecks with Matcher
     }
   }
 
-  property("TransferTransaction should deserialize to LagonakiTransaction") {
+  property("TransferTransactionOLD should deserialize to LagonakiTransaction") {
     forAll(bytes32gen, bytes32gen, timestampGen, positiveLongGen, positiveLongGen) {
       (senderSeed: Array[Byte], recipientSeed: Array[Byte], time: Long, amount: Long, fee: Long) =>
 
         val sender = PrivateKeyAccount(senderSeed)
         val recipient = PrivateKeyAccount(recipientSeed)
         val tx = createWavesTransfer(sender, recipient, amount, fee, time).right.get
-        val txAfter = TransactionParser.parseBytes(tx.bytes()).get.asInstanceOf[TransferTransaction]
+        val txAfter = TransactionParser.parseBytes(tx.bytes()).get.asInstanceOf[TransferTransactionOLD]
 
         txAfter.getClass.shouldBe(tx.getClass)
 
         tx.signature shouldEqual txAfter.signature
-        tx.sender shouldEqual txAfter.asInstanceOf[TransferTransaction].sender
+        tx.sender shouldEqual txAfter.asInstanceOf[TransferTransactionOLD].sender
         tx.recipient shouldEqual txAfter.recipient
         tx.timestamp shouldEqual txAfter.timestamp
         tx.amount shouldEqual txAfter.amount

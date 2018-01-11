@@ -28,7 +28,7 @@ object TransactionDiffer {
         case itx: IssueTransaction => AssetTransactionsDiff.issue(currentBlockHeight)(itx)
         case rtx: ReissueTransaction => AssetTransactionsDiff.reissue(s, settings, currentBlockTimestamp, currentBlockHeight)(rtx)
         case btx: BurnTransaction => AssetTransactionsDiff.burn(s, currentBlockHeight)(btx)
-        case ttx: TransferTransaction => TransferTransactionDiff(s, settings, currentBlockTimestamp, currentBlockHeight)(ttx)
+        case ttx: TransferTransactionOLD => TransferTransactionOLDDiff(s, settings, currentBlockTimestamp, currentBlockHeight)(ttx)
         case ltx: LeaseTransaction => LeaseTransactionsDiff.lease(s, currentBlockHeight)(ltx)
         case ltx: LeaseCancelTransaction => LeaseTransactionsDiff.leaseCancel(s, settings, currentBlockTimestamp, currentBlockHeight)(ltx)
         case etx: ExchangeTransaction => ExchangeTransactionDiff(s, currentBlockHeight)(etx)
